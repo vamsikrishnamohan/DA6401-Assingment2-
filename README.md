@@ -1,7 +1,6 @@
-# CS6910 Assignment 2
-Assignment 2 submission for the course CS6910 Fundamentals of Deep Learning.  
-
-Team members: N Sowmya Manojna (BE17B007), Shubham Kashyapi (MM16B027)
+# DA6401 Assignment 2
+DA24M026
+Vamsi krishna Mohan 
 
 ---
 ## Part-A Training a Smaller Network from Scratch
