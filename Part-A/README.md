@@ -19,7 +19,7 @@ sweep_config = {
             'values': ['ReLU', 'SiLU', 'GeLU']
         },
         'dense_neurons': {
-            'values': [128, 256]
+            'values': [128, 256] 
         },
         'dense_activation': {
             'values': ['ReLU', 'SiLU']
