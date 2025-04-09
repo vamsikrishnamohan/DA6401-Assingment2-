@@ -2,139 +2,106 @@
 DA24M026
 Vamsi krishna Mohan 
 
----
-## Part-A Training a Smaller Network from Scratch
-### 1) Q1 to Q3 (Model architecture and wandb sweeps)
-Part-A-Q1-to-Q3.ipynb loads the training and validation datasets. The different hyperparameter configurations for wandb are specified in the variable sweep_config. 
-```python
-sweep_config = {'name': 'random-test-sweep', 'method': 'random'}
-sweep_config['metric'] = {'name': 'val_acc', 'goal': 'maximize'}
-parameters_dict = {
-                   'first_layer_filters': {'values': [32, 64]},
-                   'filter_org': {'values': [0.5, 1, 2]}, # Halving, same, doubling in subsequent layers
-                   'data_aug': {'values': [False, True]},
-                   'batch_norm': {'values': [False, True]}, 
-                   'dropout': {'values': [0.0, 0.2, 0.3]},
-                   'kernel_size': {'values': [3,5,7]},
-                   'dense_size': {'values': [32, 64, 128]},
-                   'activation': {'values': ['relu']},
-                   'num_epochs': {'values': [50]}, 
-                   'optimizer': {'values': ['adam']},
-                   'conv_layers': {'values': [5]}
-                  }
-sweep_config['parameters'] = parameters_dict
-```
-The function CNN_train defines the model architecture, trains the model and logs the metrics to wandb. Link for wandb project https://wandb.ai/cs6910-team/DL-Assignment2-PartA-5April-2
+Assignment Report[WandB Report](https://wandb.ai/da24m026-indian-institute-of-technology-madras/Simple_cnn/reports/DA6401-Assignment-2---VmlldzoxMjE3ODE4OQ)
 
-### 2) Q4 (Training without wandb, evaluating on test set, visualizing test images and filters)
+---
+# Part-A Training a Smaller Network from Scratch
+### 1) Q1 to Q3 (Model architecture and wandb sweeps)
+Q1toQ3.ipynb loads the training and validation datasets. The different hyperparameter configurations for wandb are specified in the variable sweep_config. 
+```python
+sweep_config = {
+    'method': 'bayes',
+    'metric': {
+      'name': 'val_acc',
+      'goal': 'maximize'   
+    },
+    'parameters': {
+        'conv_filters': {
+            'values': [[32, 32, 32, 32, 32], [32, 64, 128, 256, 512]]
+        },
+        'conv_kernel_sizes': {
+            'values': [[3, 3, 3, 3, 3], [5, 3, 3, 3, 3]]
+        },
+        'conv_activation': {
+            'values': ['ReLU', 'SiLU', 'GeLU']
+        },
+        'dense_neurons': {
+            'values': [128, 256] 
+        },
+        'dense_activation': {
+            'values': ['ReLU', 'SiLU']
+        },
+        'dropout': {
+            'values': [0.2, 0.3]
+        },
+        'use_batchnorm': {
+            'values': [True, False]
+        },
+        'lr': {
+            'values': [1e-3, 1e-4]
+        },
+        'batch_size': {
+            'values': [32, 64]
+        },
+        'use_augmentation': {  
+            'values': [True, False]
+        }
+    }
+}
+```
+The function CNN_train defines the model architecture, trains the model and logs the metrics to wandb. Link for wandb project[Model Runs](https://wandb.ai/da24m026-indian-institute-of-technology-madras/Simple_cnn/reports/DA6401-Assignment-2---VmlldzoxMjE3ODE4OQ#question-2)
+
+### 2) Q4 (Training and evaluating on test set with best model , visualizing test images and filters)
 PartA_Q4.ipynb can be used to train a model using the optimal hyperparameters obtained in Q2 and Q3. The code for loading the data, initializing the model architecture and training is similar to the previous notebook. So this notebook can be used to quickly test the code without setting up the wandb sweeps. The optimal hyperparameters are specified as follows. These can be modified for the purpose of testing the code.
 ```python
-optimal = {
-              'first_layer_filters': 64,
-              'filter_org': 1, # Same number of filters in all convolution layers
-              'data_aug': True,
-              'batch_norm': True, 
-              'dropout': 0.2,
-              'kernel_size': 3,
-              'dense_size': 128,
-              'activation': 'relu',
-              'num_epochs': 50, 
-              'optimizer': 'adam',
-              'conv_layers': 5
-          }
+best_model = SimpleCNN(
+    conv_filters=[32, 64, 128, 256, 512], 
+    conv_kernel_sizes=[3, 3, 3, 3, 3],
+    conv_activation="GeLU",
+    dense_neurons=256,
+    dense_activation="SiLU",
+    dropout=0.3,
+    use_batchnorm=True,
+    lr=0.0001
+)
 ```
-The trained model can also be accessed directly at https://drive.google.com/drive/folders/1343Tk13X9iyIxdF4SityFtGOV9soLS5c?usp=sharing
-```python
-model = tf.keras.models.load_model(pathlib.Path('/content/drive/MyDrive/DL_Assignment2_PartA_Model'))
-```
-The code for evaluating this model on the test set (Q4 (a)), visualizing test images (Q4 (b)) and visualizing kernels (Q4 (c)) is also included in the same notebook.
 
-### 2) Q5 (Guided backpropogation)
-PartA_Q5.ipynb
-The gradient for relu activation is redefined. The saved model is loaded and guided backpropogation is performed. The gradient images are visualized. 
+The code for evaluating this model on the test set (Q4 (a)), visualizing test images (Q4 (b))  is also included in the same notebook.
 
+# Part-B Using Pre-trained Models for Image Classification
 
-## Part-B Using Pre-trained Models for Image Classification
 ### 1. Dataset
-The dataset can be downloaded using the [`drive_dataset_check.ipynb`](https://github.com/sowmyamanojna/CS6910-Deep-Learning-Assignment-2/blob/main/drive_dataset_check.ipynb) code present in the main directory.
 
-The code downloads the [iNaturalist dataset](https://github.com/sowmyamanojna/CS6910-Deep-Learning-Assignment-2/blob/main/drive_dataset_check.ipynb), unzips it and renames the images sequentially (for easy identification of missing images in case of network discrepancy).
+The code: [iNaturalist dataset](https://github.com/vamsikrishnamohan/DA6401-Assingment2-/blob/main/data_loading.py) loads the images and then loaded images are split into training & validation sets. The image size is restricted to (256, 256) and all images that do not conform to the  specified size are automatically resized.
 
-The images are then loaded, split into training & validation sets. The image size is restricted to (256, 256) and all images that do not conform to the  specified size are automatically resized.
-
-### 2. Models
-The trained model is made modular by implementing a `CNN` class.  
+### 2. Model
+The trained model is made modular by implementing a `FineTuneModel` class.  
 
 Instances of the class can be created by specifying the base model, a flag determining whether the weights of the last few layers should be trained and an offset (i.e.) the number of layers from the end that have to be trained. The available options of the parameters are as follows:
 
-- `base_model_name`: A string that specifies the base model that should be loaded
-    + "InceptionV3"
-    + "InceptionResNetV2"
+- `model_version`: A string that specifies the base model that should be loaded
     + "ResNet50"
-    + "Xception"
-- `tune`: A flag that determines whether the last few layers can be trained (default: False)
-    + True
-    + False
-- `offset`: An positive integer that determines the number of layers from the end that should be trained. (Active only when the `tune` parameter is set to True; default: 20)
 
-### 3. Train without wandb
+
+### 3. Train with wandb
 ```python
-base_model_name = "InceptionV3"
-tune = False
-offset = 20
-
-model = CNN(base_model_name, tune, offset)
-
-base_learning_rate = 0.0001
-model.compile(optimizer=tf.keras.optimizers.Adam(lr=base_learning_rate),
-                loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
-                metrics=['accuracy'])
-```
-
-### 4. Train with wandb
-```python
-sweep_config = {'name': 'random-test-sweep', 'method': 'grid'}
-sweep_config['metric'] = {'name': 'val_acc', 'goal': 'maximize'}
-parameters_dict = {
-                   'base_model_name': {'values': ["InceptionV3", "InceptionResNetV2", "ResNet50", "Xception"]},
-                   'tune': {'values': [False, True]},
-                  }
-sweep_config['parameters'] = parameters_dict
-
-sweep_id = wandb.sweep(sweep_config, project = 'DL-Assignment2-PartB-9April')
-wandb.agent(sweep_id, function=pretrain_CNN_sweep)
+sweep_config = {
+    "method": "grid",
+    "metric": {"name": "val_acc", "goal": "maximize"}, 
+    "parameters": {
+        "epochs": {"values": [5]},
+        "batch_size": {"values": [64, 128]},
+        "denselayer_size": {"values": [64, 128]},
+        "l_rate": {"values": [0.001, 0.0001]},
+        "optimizer": {"values": ["Adam"]},
+        "dropout": {"values": [0.2, 0.4]},
+        "model_version": {"values": ["resnet50"]},
+        "activation": {"values": ["relu", "leakyrelu"]}
+    }
+}
+sweep_id = wandb.sweep(sweep_config, project="Pretrained_Resnet50-Model")# Run the Sweep Agent
+wandb.agent(sweep_id, function=train, count=20)
 ```
 
 ### 5. Results
-The results of the parameter sweep can be accessed here: [Wandb report Part-B](https://wandb.ai/cs6910-team/assignment-2/reports/CS6910-Assignment-2--Vmlldzo1NzQ1MTc#part-b-:-fine-tuning-a-pre-trained-model)
-
----
-## Part-C YOLO-v3 for Forest Fire Detection
-### 1. Model - Weights and `config.json`
-The trained weights are taken from [OlafenwaMoses/FireNET](https://github.com/OlafenwaMoses/FireNET/).
-
-The files required for execution are as follows:
-
-- [detection_model-ex-33--loss-4.97.h5](https://github.com/OlafenwaMoses/FireNET/releases/download/v1.0/detection_model-ex-33--loss-4.97.h5)
-- [detection_config.json](https://github.com/OlafenwaMoses/FireNET/releases/download/v1.0/detection_config.json)
-- [pretrianed-yolov3.h5](https://github.com/OlafenwaMoses/ImageAI/releases/download/essential-v4/pretrained-yolov3.h5)
-
-Note that the size of `pretrianed-yolov3.h5` and `detection_model-ex-33--loss-4.97.h5` is greater than 100 Mb. So, the files have to downloaded separately.
-
-### 2. Process Video
-In order to detect fire from the video `video1.mp4`, run the following:
-```python
-python3 detect_from_video
-```
-
-
-### 3. Dataset
-The fire dataset videos are taken from [MIVIA – Laboratorio di Macchine Intelligenti per il Riconoscimento di Video, Immagini e Audio](https://mivia.unisa.it/datasets/video-analysis-datasets/fire-detection-dataset/) and [Bilkent University](http://signal.ee.bilkent.edu.tr/VisiFire/).  
-
-
-### 4. Results
-The final processed video can be accessed here: [final.mp4](https://github.com/sowmyamanojna/CS6910-Deep-Learning-Assignment-2/blob/main/Part-C/final.mp4)
-
-The youtube link for the same: [Final Video](https://www.youtube.com/watch?v=W7NxfqgGzAE)
-
-The actual and processed video files can be accessed here: [CS6910-YOLOv3](https://drive.google.com/drive/folders/1PP5FhP5_MpRucv7xq-RVAYLalWfyJNH1?usp=sharing)
+The results of the parameter sweep can be accessed here: [Wandb report Part-B](https://wandb.ai/da24m026-indian-institute-of-technology-madras/Simple_cnn/reports/DA6401-Assignment-2---VmlldzoxMjE3ODE4OQ#question-3)
