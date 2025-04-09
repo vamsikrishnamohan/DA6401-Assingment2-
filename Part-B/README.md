@@ -17,7 +17,7 @@ Instances of the class can be created by specifying the base model, a flag deter
 ```python
 sweep_config = {
     "method": "grid",
-    "metric": {"name": "val_acc", "goal": "maximize"},
+    "metric": {"name": "val_acc", "goal": "maximize"}, 
     "parameters": {
         "epochs": {"values": [5]},
         "batch_size": {"values": [64, 128]},
