@@ -2,7 +2,7 @@
 DA24M026
 Vamsi krishna Mohan 
 
-Assignment Report[WandB Report](https://wandb.ai/da24m026-indian-institute-of-technology-madras/Simple_cnn/reports/DA6401-Assignment-2---VmlldzoxMjE3ODE4OQ)
+Assignment Report :[WandB Report](https://api.wandb.ai/links/da24m026-indian-institute-of-technology-madras/ph0mpm9w)
 
 ---
 # Part-A Training a Smaller Network from Scratch
