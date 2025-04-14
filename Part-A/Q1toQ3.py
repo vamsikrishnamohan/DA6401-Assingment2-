@@ -6,7 +6,7 @@ from simpleCNN import SimpleCNN
 
 
 ###############################################
-# Listing the hyperparameters in wandb config 
+# Listing the hyperparameters in wandb config     
 ###############################################
 sweep_config = {
     'method': 'bayes',
