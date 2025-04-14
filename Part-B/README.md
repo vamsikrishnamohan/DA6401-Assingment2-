@@ -1,6 +1,6 @@
 ## Part-B Using Pre-trained Models for Image Classification
 
-### 1. Dataset
+### 1. Dataset   
 
 The code: [iNaturalist dataset](https://github.com/vamsikrishnamohan/DA6401-Assingment2-/blob/main/data_loading.py) loads the images and then loaded images are split into training & validation sets. The image size is restricted to (256, 256) and all images that do not conform to the  specified size are automatically resized.
 
