@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
-import wandb
+import wandb 
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 from kaggle_secrets import UserSecretsClient # used in kaggle to support wandb 
